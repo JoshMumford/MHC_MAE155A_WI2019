@@ -28,14 +28,14 @@ except:
 #      payload_weight = np.array([[4 * 230 * N_lb, 5 * 230 * N_lb, 6 * 230 * N_lb ],[4 * 230 * N_lb, 5 * 230 * N_lb, 6 * 230 * N_lb ]])
 #      range_km = np.array([[100., 100, 100] , [200, 200 , 200]])
 #   The other variables you can just remain as a single value, because the program will automatically make them into a (2, 3) matrix.
-num_sweep_points = 0
+num_sweep_points = 100
 shape = (1 + num_sweep_points,)
 
 # energy_source_type specifies whether you're using an electric or fuel-burning aircraft. Different equations apply
 # based on which type you choose. 
 
-energy_source_type = 'electric'
-# energy_source_type = 'fuel_burning'
+#energy_source_type = 'electric'
+energy_source_type = 'fuel_burning'
 
 # Constants, and units are imported from lsdo_utils. Allows for the use of gravity, as well as converting between SI and Imperial units. 
 lb_N = units('lb', 'kg') / constants.g
@@ -56,11 +56,11 @@ if energy_source_type == 'electric':
 elif energy_source_type == 'fuel_burning':
     payload_weight = 400 * 230 * units('N', 'lbf')
     crew_weight = 10 * 230 * units('N', 'lbf')
-    range_km = 6500.
-    lift_to_drag_ratio = 15.
+    range_km = 6482.*np.ones(1,shape)
+    lift_to_drag_ratio = 17.3
     cruise_speed = 230.
     thrust_source_type = 'jet'
-    landing_distance_ft = 8000.
+    landing_distance_ft = 9000.
     ref_wing_loading_lbf_ft2 = 130.
     ref_thrust_to_weight = 0.3
     aircraft_type = 'transport'
@@ -141,3 +141,8 @@ prob.run_model()
 # prob.check_partials(compact_print=True)
 prob.run_driver()
 prob.model.list_outputs(prom_name=True)
+
+
+import matplotlib.pyplot as plt
+plt.plot(prob['gross_weight'][1:],prob['range_km'][1:])
+plt.show()

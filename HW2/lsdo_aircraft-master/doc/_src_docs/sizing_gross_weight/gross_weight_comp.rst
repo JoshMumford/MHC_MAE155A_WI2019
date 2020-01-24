@@ -22,22 +22,22 @@ Gross weight comp
      -  ['bool']
      -  True if the component has variables that are distributed across multiple processes.
   *  -  shape
-     -  <object object at 0x0000021BDB2E6AB0>
+     -  <object object at 0x0000023786BD5AA0>
      -  None
      -  ['tuple']
      -  
   *  -  a
-     -  <object object at 0x0000021BDB2E6AB0>
+     -  <object object at 0x0000023786BD5AA0>
      -  None
      -  ['float']
      -  
   *  -  c
-     -  <object object at 0x0000021BDB2E6AB0>
+     -  <object object at 0x0000023786BD5AA0>
      -  None
      -  ['float']
      -  
   *  -  k_vs
-     -  <object object at 0x0000021BDB2E6AB0>
+     -  <object object at 0x0000023786BD5AA0>
      -  None
      -  ['float']
      -  

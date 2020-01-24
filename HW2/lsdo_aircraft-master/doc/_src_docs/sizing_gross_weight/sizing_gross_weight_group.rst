@@ -17,12 +17,12 @@ Sizing---gross weight group
      -  None
      -  Linear solver(s) in this group, if using an assembled jacobian, will use this type.
   *  -  shape
-     -  <object object at 0x0000021BDB2E6AB0>
+     -  <object object at 0x0000023786BD5AA0>
      -  None
      -  ['tuple']
      -  
   *  -  aircraft
-     -  <object object at 0x0000021BDB2E6AB0>
+     -  <object object at 0x0000023786BD5AA0>
      -  None
      -  None
      -  
