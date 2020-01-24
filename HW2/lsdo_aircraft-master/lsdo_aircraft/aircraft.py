@@ -77,3 +77,4 @@ class Aircraft(OptionsDictionary):
         self['ref_wing_loading'] = self['ref_wing_loading_lbf_ft2'] * units('N/m^2', 'lbf/ft^2')
 
         self['landing_distance'] = self['landing_distance_ft'] * units('m', 'ft')
+       
