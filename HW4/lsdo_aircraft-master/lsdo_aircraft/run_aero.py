@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 from openmdao.api import Problem, IndepVarComp
 
@@ -7,7 +8,7 @@ from lsdo_aircraft.api import Geometry, LiftingSurfaceGeometry, BodyGeometry, Pa
 from lsdo_aircraft.api import Analyses, Aerodynamics
 
 
-n = 1
+n = 100
 shape = (n,)
 
 # 
@@ -17,10 +18,6 @@ geometry = Geometry()
 geometry.add(LiftingSurfaceGeometry(
     name='wing',
     lift_coeff_zero_alpha=0.23,
-    sweep= 37.*(np.pi/180.),
-    wetted_area= 883.4,
-    aspect_ratio=6.96,
-    mac=12.4036, 
 
 ))
 geometry.add(LiftingSurfaceGeometry(
@@ -58,7 +55,7 @@ prob = Problem()
 comp = IndepVarComp()
 comp.add_output('altitude', val=11., shape=shape)
 comp.add_output('speed', val=250., shape=shape)
-comp.add_output('alpha', val=3. * np.pi / 180., shape=shape)
+comp.add_output('alpha', val=np.linspace(-3. * (np.pi / 180.),90.*(np.pi/180.),n), shape=shape)
 comp.add_output('ref_area', val=427.8, shape=shape)
 comp.add_output('ref_mac', val=7., shape=shape)
 
@@ -69,19 +66,20 @@ prob.model.add_subsystem('aircraft_group', aircraft_group, promotes=['*'])
 
 prob.setup(check=True)
 
-prob['wing_geometry_group.area'] = 427.8
-prob['wing_geometry_group.wetted_area'] = 427.8 * 2.1
-prob['wing_geometry_group.characteristic_length'] = 7.
-prob['wing_geometry_group.sweep'] = 31.6 * np.pi / 180.
-prob['wing_geometry_group.incidence_angle'] = 0.
+prob['wing_geometry_group.area'] = 207.675
+prob['wing_geometry_group.wetted_area'] = 207.675*2.1
+prob['wing_geometry_group.characteristic_length'] = 12.4036
+prob['wing_geometry_group.sweep'] = 37 * np.pi / 180.
+prob['wing_geometry_group.incidence_angle'] = 1. * np.pi/180.
 prob['wing_geometry_group.aspect_ratio'] = 8.68
-prob['wing_geometry_group.mac'] = 7.
+prob['wing_geometry_group.mac'] = 12.4036
+prob['mach_number'] = 0.85
 
-prob['tail_geometry_group.area'] = 101.3
-prob['tail_geometry_group.wetted_area'] = 101.3 * 2.1
+prob['tail_geometry_group.area'] = 69.714
+prob['tail_geometry_group.wetted_area'] = 69.714 * 2.1
 prob['tail_geometry_group.characteristic_length'] = 5.
-prob['tail_geometry_group.sweep'] = 35. * np.pi / 180.
-prob['tail_geometry_group.incidence_angle'] = 0.
+prob['tail_geometry_group.sweep'] = 37. * np.pi / 180.
+prob['tail_geometry_group.incidence_angle'] = -2. * np.pi/180.
 prob['tail_geometry_group.aspect_ratio'] = 4.5
 prob['tail_geometry_group.mac'] = 5.
 
@@ -90,3 +88,11 @@ prob['fuselage_geometry_group.characteristic_length'] = 73.
 
 prob.run_model()
 prob.model.list_outputs(prom_name=True)
+
+plt.figure(1)
+plt.plot(prob['alpha'][1:],prob['aerodynamics_analysis_group.lift_coeff'][1:])
+plt.show()
+
+plt.figure(2)
+plt.plot(prob['alpha'][1:],prob['aerodynamics_analysis_group.drag_coeff'][1:])
+plt.show()
