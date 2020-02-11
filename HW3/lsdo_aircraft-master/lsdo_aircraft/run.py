@@ -8,6 +8,7 @@ from lsdo_aircraft.sizing_gross_weight.sizing_gross_weight_group import SizingGr
 from lsdo_aircraft.sizing_performance.sizing_performance_group import SizingPerformanceGroup
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 try:
     from lsdo_viz.api import Problem
@@ -28,7 +29,7 @@ except:
 #      payload_weight = np.array([[4 * 230 * N_lb, 5 * 230 * N_lb, 6 * 230 * N_lb ],[4 * 230 * N_lb, 5 * 230 * N_lb, 6 * 230 * N_lb ]])
 #      range_km = np.array([[100., 100, 100] , [200, 200 , 200]])
 #   The other variables you can just remain as a single value, because the program will automatically make them into a (2, 3) matrix.
-num_sweep_points = 100
+num_sweep_points = 0
 shape = (1 + num_sweep_points,)
 
 # energy_source_type specifies whether you're using an electric or fuel-burning aircraft. Different equations apply
@@ -43,25 +44,25 @@ N_lb = 1. / lb_N
 
 # Depending on whether the aircraft is fuel-burning or electric, you need to change the values under the corresponding 'if' statement. 
 if energy_source_type == 'electric':
-    payload_weight = 4 * 230 * units('N', 'lbf')
+    payload_weight =  410 * 230 * units('N', 'lbf')
     crew_weight = 1 * 230 * units('N', 'lbf')
-    range_km = 100.
-    lift_to_drag_ratio = 10.
-    cruise_speed = 67.
+    range_km = 6492.
+    lift_to_drag_ratio = 17.5
+    cruise_speed = 256.
     thrust_source_type = 'propeller'
-    landing_distance_ft = 9000.
+    landing_distance_ft = 8000.
     ref_wing_loading_lbf_ft2 = 25.
     ref_thrust_to_weight = 0.3
     aircraft_type = 'ga_twin'
 elif energy_source_type == 'fuel_burning':
     payload_weight = 400 * 230 * units('N', 'lbf')
     crew_weight = 10 * 230 * units('N', 'lbf')
-    range_km = 6482.
+    range_km = 6492.
     lift_to_drag_ratio = 17.3
     cruise_speed = 256.
     thrust_source_type = 'jet'
     landing_distance_ft = 9000.
-    ref_wing_loading_lbf_ft2 = 130.
+    ref_wing_loading_lbf_ft2 = 127.
     ref_thrust_to_weight = 0.35
     aircraft_type = 'transport'
 
@@ -82,7 +83,7 @@ aircraft = Aircraft(
     CL_takeoff=1.5/1.21,
     battery_energy_density_Wh_kg=150.,
     propulsive_efficiency=0.85,
-    tsfc=1.e-4, # Thrust Specific Fuel Consumption
+    tsfc=.00019, # Thrust Specific Fuel Consumption
     energy_source_type=energy_source_type,
     thrust_source_type=thrust_source_type,
     stall_speed=cruise_speed * 0.6,
@@ -93,7 +94,7 @@ aircraft = Aircraft(
     thrust_to_weight=thrust_to_weight,
     ref_wing_loading_lbf_ft2=ref_wing_loading_lbf_ft2,
     ref_thrust_to_weight=ref_thrust_to_weight,
-)
+    )
 
 prob = Problem()
 prob.aircraft = aircraft
@@ -105,7 +106,7 @@ comp.add_output('crew_weight', val=crew_weight, shape=shape)
 comp.add_output('range_km', val=range_km, shape=shape)
 comp.add_output('lift_to_drag_ratio', val=lift_to_drag_ratio, shape=shape)
 comp.add_output('oswald_efficiency', val=0.8, shape=shape)
-comp.add_output('aspect_ratio', val=10.42, shape=shape)
+comp.add_output('aspect_ratio', val=6.96, shape=shape)
 comp.add_output('cruise_speed', val=cruise_speed, shape=shape)
 comp.add_output('CD0', val=0.0350, shape=shape)
 prob.model.add_subsystem('inputs_comp', comp, promotes=['*']) # Adding the subsystem of Independent Variable Components to your model. 
@@ -141,17 +142,31 @@ prob.run_model()
 # prob.check_partials(compact_print=True)
 prob.run_driver()
 prob.model.list_outputs(prom_name=True)
-import matplotlib.pyplot as plt
 
-plt.plot(prob['wing_loading_lbf_ft2'][1:],prob['climb_thrust_to_weight'][1:],label='Climb')
-plt.plot(prob['wing_loading_lbf_ft2'][1:],prob['turn_thrust_to_weight'][1:],label='Turn')
-plt.plot(prob['takeoff_wing_loading'][1:]*0.021,prob['thrust_to_weight'][1:],label='Takeoff')
-plt.plot(prob['landing_wing_loading'][1:]*0.021,prob['thrust_to_weight'][1:],label='Landing')
-plt.plot(prob['stall_wing_loading'][1:]*0.021,prob['thrust_to_weight'][1:],label='Stall')
-plt.plot(prob['wing_loading_lbf_ft2'][0],prob['thrust_to_weight'][0],marker='*',markersize=8,color='blue',label='Optimized Pt.')
-plt.legend(loc='upper right')
-plt.ylim(0,0.6)
-plt.xlabel('Wing Loading W/S [lbf/ft2]')
-plt.ylabel('Thrust to Weight T/W')
-plt.title('Preliminary Analysis Constraints')
+
+##PLOTS
+
+plt.plot(prob['range_km'][1:], prob['gross_weight'][1:])
+
+plt.xlabel('Range (km)')
+plt.ylabel('Gross Weight (N)')
+plt.title('Gross Weight vs Range')
+
+
+#plt.plot(prob['wing_loading'][1:], prob['climb_power_to_weight'][1:])
+#plt.xlabel('Wing Loading W/S (lbf/in^2)')
+#plt.ylabel('Thrust to Weight')
+
+#plt.plot(prob['stall_wing_loading'][1:]*.021, prob['thrust_to_weight'][1:])
+#plt.plot(prob['wing_loading_lbf_ft2'][1:], prob['climb_thrust_to_weight'][1:])
+#plt.plot(prob['wing_loading_lbf_ft2'][1:], prob['turn_thrust_to_weight'][1:])
+#plt.plot(prob['takeoff_wing_loading'][1:]*.021, prob['thrust_to_weight'][1:])
+#lt.plot(prob['landing_wing_loading'][1:]*.021, prob['thrust_to_weight'][1:])
+
+#plt.ylim(0,.6)
+
+#print(prob['stall_wing_loading'])
 plt.show()
+
+
+
