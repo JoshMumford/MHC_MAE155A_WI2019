@@ -37,7 +37,7 @@ class TurnThrustToWeightComp(LinearPowerCombinationComp):
             out_name='turn_thrust_to_weight',
             terms_list=[
                 (1. / 0.5 / np.pi, dict(
-                    turn_load_factor=2.,
+                    turn_load_factor=3.5,
                     wing_loading=1.,
                     oswald_efficiency=-1.,
                     aspect_ratio=-1.,

@@ -36,7 +36,7 @@ class Aircraft(OptionsDictionary):
         self.declare('CL_max', default=1.5, types=float_array_types)
         self.declare('CL_takeoff', default=1.5, types=float_array_types)
         self.declare('climb_gradient', default=0.05, types=float_array_types)
-        self.declare('turn_load_factor', default=2.5, types=float_array_types)
+        self.declare('turn_load_factor', default=3.5, types=float_array_types)
         self.declare('TOP', default=400., types=float_array_types)
         self.declare('takeoff_density', default=1.225, types=float_array_types)
         self.declare('stall_speed', default=1.225, types=float_array_types)
