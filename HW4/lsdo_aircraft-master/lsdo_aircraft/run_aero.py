@@ -17,7 +17,7 @@ geometry = Geometry()
 
 geometry.add(LiftingSurfaceGeometry(
     name='wing',
-    lift_coeff_zero_alpha=0.23,
+    lift_coeff_zero_alpha=0.175,
 
 ))
 geometry.add(LiftingSurfaceGeometry(
@@ -55,7 +55,7 @@ prob = Problem()
 comp = IndepVarComp()
 comp.add_output('altitude', val=11., shape=shape)
 comp.add_output('speed', val=250., shape=shape)
-comp.add_output('alpha', val=np.linspace(-3. * (np.pi / 180.),90.*(np.pi/180.),n), shape=shape)
+comp.add_output('alpha', val=np.linspace(-20. * (np.pi / 180.),20.*(np.pi/180.),n), shape=shape)
 comp.add_output('ref_area', val=427.8, shape=shape)
 comp.add_output('ref_mac', val=7., shape=shape)
 
@@ -91,6 +91,7 @@ prob.model.list_outputs(prom_name=True)
 
 plt.figure(1)
 plt.plot(prob['alpha'][1:],prob['aerodynamics_analysis_group.lift_coeff'][1:])
+plt.plot(prob['alpha'][1:],np.ones(n-1,)*1.7,'r--')
 plt.show()
 
 plt.figure(2)
